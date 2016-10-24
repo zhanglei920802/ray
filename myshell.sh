@@ -271,15 +271,21 @@ case "$1" in
 # function function_pwd(){
 	# echo  $(pwd);
 # }
+
+
+###########################################Android#######################################################
 alias ls='ls --color --show-control-chars'
+#保存配置文件
 alias save_config='source ~/.bashrc ~/.bash_profile'
 alias xpf=explorer
 alias copy_config=copy_projects_file
+#导出最近任务
 alias dump_activity="adb shell dumpsys activity activities | sed -En -e '/Running activities/,/Run #0/p'"
-alias capture="adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g' > screen.png"
-alias turn_off="adb shell input keyevent 26"
-alias turn_onf="adb shell input keyevent 82"
-alias stat="adb logcat | grep 'com.android.statistics\|eventID\|eventTag\|eventTime'"
+#截屏
+alias adb_capture="adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g' > screen.png"
+alias adb_turn_off="adb shell input keyevent 26"
+alias adb_turn_on="adb shell input keyevent 82"
+alias log_stat="adb logcat | grep 'com.android.statistics\|eventID\|eventTag\|eventTime'"
 alias start_test="adb shell am start  -n 'com.android.browser/com.oppo.browser.iflow.weather.WeatherActivity' -a android.intent.action.MAIN -c android.intent.category.LAUNCHER"
 #禁用overDraw选项
 alias disable_overdraw='adb shell setprop debug.hwui.overdraw false'
@@ -370,3 +376,4 @@ function make(){
 	;;
 	esac
 }
+###########################################Android#######################################################
