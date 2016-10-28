@@ -293,6 +293,10 @@ alias disable_overdraw='adb shell setprop debug.hwui.overdraw false'
 alias enable_overdraw='adb shell setprop debug.hwui.overdraw true'
 #导出当前正在前台运行的activity
 alias adb_current_activity='adb shell dumpsys activity | grep mFocusedActivity'
+#导出当前的内存使用情况
+alias adb_dump_browser_memory='adb shell dumpsys meminfo com.android.browser'
+#dump当前window的层次树
+alias adb_dump_view_tree=dumpViewTree
 function copy_projects_file(){
 	originDir=/myconfig/Browser
 	#echo $(pwd)/BrowserReader/
@@ -304,6 +308,13 @@ function copy_projects_file(){
 	\cp -rf ${originDir}/Kernel/  ./
 }
 
+#导出当前window的view tree，然后copy 到当前目录
+function dumpViewTree(){
+	echo '##################dump start ############################'
+	adb shell uiautomator dump /mnt/sdcard/window_dump.xml;
+	adb pull /mnt/sdcard/window_dump.xml .;
+	echo '##################dump end ##############################'
+}
 function copy_db(){
     #记住当前路径
     path=`pwd`
