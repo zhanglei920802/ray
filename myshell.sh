@@ -295,8 +295,30 @@ alias enable_overdraw='adb shell setprop debug.hwui.overdraw true'
 alias adb_current_activity='adb shell dumpsys activity | grep mFocusedActivity'
 #导出当前的内存使用情况
 alias adb_dump_browser_memory='adb shell dumpsys meminfo com.android.browser'
+#dump gfx信息
+alias adb_dump_gfx_info='adb shell dumpsys gfxinfo com.android.browser'
+alias adb_uninstall='adb shell pm uninstall $1'
 #dump当前window的层次树
 alias adb_dump_view_tree=dumpViewTree
+alias adb_dump_activity=dumpActivity
+#导出指定包名的AMS的信息，包括
+#1.PENDING INTENTS：dumpsys activity intents
+#2.BROADCAST STATE：dumpsys activity broadcasts
+#3.CONTENT PROVIDERS：dumpsys activity providers
+#4.SERVICES：dumpsys activity services
+#5.RECENT TASKS (dumpsys activity recents)
+#6.ACTIVITIES (dumpsys activity activities)
+	#ViewRoot
+	#Choreographer
+	#View Hierarchy
+	#Running activities (most recent first)
+	#mFocusedActivity
+#7.RUNNING PROCESSES (dumpsys activity processes)
+function dumpActivity(){
+	echo '####################dump begin###############'
+	adb shell dumpsys activity -p $1 > dump_activity.txt
+	echo '####################dump end###############'
+}
 function copy_projects_file(){
 	originDir=/myconfig/Browser
 	#echo $(pwd)/BrowserReader/
