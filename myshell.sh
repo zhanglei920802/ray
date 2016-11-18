@@ -301,6 +301,11 @@ alias adb_uninstall='adb shell pm uninstall $1'
 #dump当前window的层次树
 alias adb_dump_view_tree=dumpViewTree
 alias adb_dump_activity=dumpActivity
+alias findname=function_find
+
+function function_find(){
+	find $1 -name "$2"
+}
 #导出指定包名的AMS的信息，包括
 #1.PENDING INTENTS：dumpsys activity intents
 #2.BROADCAST STATE：dumpsys activity broadcasts
