@@ -302,6 +302,7 @@ alias adb_uninstall='adb shell pm uninstall $1'
 alias adb_dump_view_tree=dumpViewTree
 alias adb_dump_activity=dumpActivity
 alias findname=function_find
+alias adb_list_packagelist='adb shell pm list packages -f'
 
 function function_find(){
 	find $1 -name "$2"
