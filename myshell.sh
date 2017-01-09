@@ -200,12 +200,15 @@ alias dev=cd_browser
 #进入Git BrowserShell 目录
 function cd_browser(){
 	case "$1" in  
-	"git"	) cd "E:\Git\master\BrowserShell\BrowserShell";;  
+	"master"	) cd "E:\Git\master\BrowserShell\BrowserShell";;  
+	"dev"	) cd "E:\Git\dev\BrowserShell\BrowserShell";;  
+	"python"	) cd "E:\Git\Code\pythonStudy\code";;  
 	"3.3"   ) cd "E:\Workspace\Browser_Kernel\branches\3.3\BrowserShell";;  
     "3.4.1") cd "E:\Workspace\Browser_Kernel\branches\3.4.1\BrowserShell";; 
 	"3.5"	) cd "E:\Git\V35\BrowserShell\BrowserShell";;  
 	"2.4"   ) cd "E:\Workspace\Browser_OV\branches\V2.4";; 
-	"3.7"	) cd "E:\Git\aplha\BrowserShell\BrowserShell";;   	
+	"3.7"	) cd "E:\Git\aplha\BrowserShell\BrowserShell";;
+	"pythonStudy") cd "E:\Git\Code\pythonStudy\code";
 	esac
 }
 
@@ -305,7 +308,7 @@ alias findname=function_find
 alias adb_list_packagelist='adb shell pm list packages -f'
 
 function function_find(){
-	find $1 -name "$2"
+	find $1 -name \*."$2"
 }
 #导出指定包名的AMS的信息，包括
 #1.PENDING INTENTS：dumpsys activity intents
@@ -345,16 +348,16 @@ function dumpViewTree(){
 }
 function copy_db(){
     #记住当前路径
-    path=`pwd`
+    path=pwd
 
-    cd ~/tmp/db
+    
     case "$1" in
 	"root") 
-		adb pull /data/data/com.android.browser/databases/browser2.db ;
-		adb pull /data/data/com.android.browser/databases/downloads.db ;
-		adb pull /data/data/com.android.browser/databases/downloads.db-journal ;
-		adb pull /data/data/com.android.browser/databases/browser_news.db ;
-		adb pull /data/data/com.android.browser/databases/browser_news.db-journal;
+		adb pull /data/data/com.android.browser/databases/browser2.db .;
+		adb pull /data/data/com.android.browser/databases/downloads.db .;
+		adb pull /data/data/com.android.browser/databases/downloads.db-journal .;
+		adb pull /data/data/com.android.browser/databases/browser_news.db .;
+		adb pull /data/data/com.android.browser/databases/browser_news.db-journal .;
 		echo "存储路径是:~/tmp/db/";
 	;;
 	*	)			
@@ -374,8 +377,15 @@ function copy_db(){
 #安装apk文件
 function make(){
 	case "$1" in
+	"dev") 
+		dev dev
+		gradle assembleProdDebug
+		adb push build/outputs/apk/BrowserShell-prod-debug.apk /data/local/tmp/com.android.browser
+		adb shell pm install -r "/data/local/tmp/com.android.browser"
+		adb shell am start  -n "com.android.browser/com.android.browser.BrowserActivity" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER
+	;;
 	"master") 
-		dev git
+		dev master
 		gradle assembleProdDebug
 		adb push build/outputs/apk/BrowserShell-prod-debug.apk /data/local/tmp/com.android.browser
 		adb shell pm install -r "/data/local/tmp/com.android.browser"
@@ -389,23 +399,45 @@ function make(){
 		adb shell am start  -n "com.android.browser/com.android.browser.BrowserActivity" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER
 	;;
 	"debug")
-		adb shell am start -D com.android.browser
+		if [[ "$2" == "" ]]
+			then
+				adb shell am start -D com.android.browser
+			else
+				adb shell am start -D "$2"
+		fi
+		#adb shell am start -D com.android.browser
 	;;
 	"install")
-		adb push build/outputs/apk/BrowserShell-prod-debug.apk /data/local/tmp/com.android.browser
+		if [ "$2" == "prod" ]
+			then
+				adb push build/outputs/apk/BrowserShell-prod-debug.apk /data/local/tmp/com.android.browser
+			else
+				adb push build/outputs/apk/BrowserShell-debug.apk /data/local/tmp/com.android.browser
+		fi
+
 		adb shell pm install -r "/data/local/tmp/com.android.browser"
 		adb shell am start  -n "com.android.browser/com.android.browser.BrowserActivity" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER
 	;;
 	"clear")
-		 adb shell pm clear com.android.browser
+			if [[ "$2" == "" ]]
+				then
+					adb shell pm clear com.android.browser	
+				else
+					adb shell pm clear "$2"
+
+			fi
+		 #adb shell pm clear com.android.browser
 	;;
 	"start")
 		 adb shell pm clear com.android.browser
 		 adb shell am start  -n "com.android.browser/com.android.browser.BrowserActivity" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER
 	;;
 	"cs")
-		 adb shell pm clear com.android.browser
-		 adb shell am start  -n "com.android.browser/com.android.browser.BrowserActivity" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER
+		adb shell pm clear com.android.browser
+		adb shell am start  -n "com.android.browser/com.android.browser.BrowserActivity" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER
+		if [[ "$2" == "cta" ]]; then
+			adb shell rm /mnt/sdcard/ColorOS/Browser/.config/cta_config.properties
+		fi
 	;;
 	##执行 安装 清除数据 启动
 	"ics")
@@ -415,4 +447,5 @@ function make(){
 	;;
 	esac
 }
+
 ###########################################Android#######################################################
